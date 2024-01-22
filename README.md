@@ -1,2 +1,2 @@
-# pyuno
-Uno made with python and flet
+# flet-blackjack
+Blackjack made with python and flet
