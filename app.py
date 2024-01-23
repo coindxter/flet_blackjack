@@ -93,8 +93,17 @@ def app(page: ft.Page):
 
     winner = build_container("", ft.colors.BLACK)
      
+    #function for when p1 bets
+    def p1HIT_BUTTON(e):
+
+        new_card = build_container(CARDS.pop(random.choice(list(CARDS.keys())))[0], ft.colors.BLUE)
+        pColumn1
+        
+
+        page.update()
     
-    '''
+    p1HIT_BUTTON = build_button("HIT", ft.colors.GREEN, callbac=p1HIT_BUTTON)
+    
     #layout
     pColumn1 = ft.Container(
                 content=ft.Column(
@@ -106,7 +115,7 @@ def app(page: ft.Page):
                     ],
                 ),
             )
-'''
+
     #layout
     pColumn2 = ft.Container(
                 content=ft.Column(
@@ -139,32 +148,6 @@ def app(page: ft.Page):
             alignment=ft.MainAxisAlignment.CENTER
             ),
         )
-
-    #function for when p1 bets
-    def p1HIT_BUTTON(e):
-
-        new_card = build_container(CARDS.pop(random.choice(list(CARDS.keys())))[0], ft.colors.BLUE)
-        pColumn1.update(content=ft.Column([p1c1, p1c2, new_card]))
-        
-
-        page.update()
-
-
-    p1HIT_BUTTON = build_button("HIT", ft.colors.GREEN, callbac=p1HIT_BUTTON)
-
-
-   #layout
-    pColumn1 = ft.Container(
-                content=ft.Column(
-                    [
-                        ft.Text(("Player One"), size=16),
-                        p1c1,
-                        p1c2,
-                        p1HIT_BUTTON,
-                    ],
-                ),
-            )
-
 
     #function to start game
     def start_button(e):
