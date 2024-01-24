@@ -58,6 +58,9 @@ CARDS = {
 
 }
 
+
+p1total = 0
+
 #helper function to build containers
 def build_container(name, color):
     return ft.Container(
@@ -87,21 +90,30 @@ def app(page: ft.Page):
     #player cards
     p1c1 = build_container(CARDS.pop(random.choice(list(CARDS.keys())))[0], ft.colors.BLUE)
     p1c2 = build_container(CARDS.pop(random.choice(list(CARDS.keys())))[0], ft.colors.BLUE)
+    
 
     p2c1 = build_container(CARDS.pop(random.choice(list(CARDS.keys())))[0], ft.colors.BLUE)
     p2c2 = build_container(CARDS.pop(random.choice(list(CARDS.keys())))[0], ft.colors.BLUE)
 
     winner = build_container("", ft.colors.BLACK)
      
-    #function for when p1 bets
+    
+    #function for when p1 hits 
     def p1HIT_BUTTON(e):
 
         new_card = build_container(CARDS.pop(random.choice(list(CARDS.keys())))[0], ft.colors.BLUE)
-        pColumn1
+        pColumn1.content.controls.insert(-1, new_card)
+        page.update()
+        
+           
+    
         
 
-        page.update()
-    
+
+
+
+
+
     p1HIT_BUTTON = build_button("HIT", ft.colors.GREEN, callbac=p1HIT_BUTTON)
     
     #layout
