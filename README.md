@@ -3,17 +3,17 @@ Blackjack made with python and flet
 
 ## Roadmap
 Deck Handling:
-- [ ] Use a standard 52-card deck or multiple decks shuffled together.
-- [ ] Implement proper shuffling techniques to ensure randomness.
+- [x] Use a standard 52-card deck or multiple decks shuffled together.
+- [x] Implement proper shuffling techniques to ensure randomness.
 
 Card Values:
 - [ ] Aces can be worth 1 or 11, depending on the hand's total.
-- [ ] Face cards (Jack, Queen, King) are each worth 10.
-- [ ] Number cards are worth their face value.
+- [x] Face cards (Jack, Queen, King) are each worth 10.
+- [x] Number cards are worth their face value.
 
 Game Logic:
 - [ ] Implement the basic actions: Hit, Stand, Double Down, and Split (if allowing splits).
-- [ ] Deal two initial cards to the player and the dealer, with one of the dealer's cards hidden.
+- [x] Deal two initial cards to the player and the dealer, with one of the dealer's cards hidden.
 - [ ] Check for natural blackjack (an Ace and a 10-value card) for both the player and the dealer.
 
 Player's Decisions:
@@ -35,8 +35,8 @@ Betting:
 - [ ] Handle payouts according to standard blackjack rules (e.g., 1:1 for a regular win, 3:2 for a blackjack).
 
 User Interface:
-- [ ] Create a user-friendly interface that displays the player's hand, the dealer's visible card, and relevant game information.
-- [ ] Provide clear buttons for the player's actions (Hit, Stand, Double Down, Split).
+- [x] Create a user-friendly interface that displays the player's hand, the dealer's visible card, and relevant game information.
+- [x] Provide clear buttons for the player's actions (Hit, Stand, Double Down, Split).
 
 Scoring and Statistics:
 - [ ] Keep track of the player's balance, wins, losses, and ties.

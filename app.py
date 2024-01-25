@@ -94,6 +94,9 @@ p1CARD, dCARD = deal_cards(CARDS, 2, 2)
 #main function
 def app(page: ft.Page):
 
+    p1TOTAL = float(p1CARD[0][1]) + float(p1CARD[1][1])
+    print(p1TOTAL)
+    print(p1CARD)
 
     #player cards
     p1c1 = build_container(p1CARD[0][0], ft.colors.BLUE)
@@ -113,7 +116,7 @@ def app(page: ft.Page):
         new_card = build_container(hitCARD[0][0], ft.colors.BLUE)
         pColumn1.content.controls.insert(-1, new_card)
         page.update()
-        print(hitCARD)
+        
         
     p1HIT_BUTTON = build_button("HIT", ft.colors.GREEN, callbac=p1HIT_BUTTON)
     
