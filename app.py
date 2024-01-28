@@ -1,67 +1,39 @@
+from itertools import product
 import flet as ft
 import random
 
-CARDS = { 
 
-    1: ['Ace of Spades',13],
-    2: ['2 of Spades', 2],
-    3: ['3 of Spades', 3],
-    4: ['4 of Spades', 4],
-    5: ['5 of Spades', 5],
-    6: ['6 of Spades', 6],
-    7: ['7 of Spades', 7],
-    8: ['8 of Spades', 8],
-    9: ['9 of Spades', 9],
-    10: ['10 of Spades', 10],
-    11: ['Jack of Spades', 10],
-    12: ['Queen of Spades', 10],
-    13: ['King of Spades', 10],
-    14: ['Ace of Hearts',13],
-    15: ['2 of Hearts', 2],
-    16: ['3 of Hearts', 3],
-    17: ['4 of Hearts', 4],
-    18: ['5 of Hearts', 5],
-    19: ['6 of Hearts', 6],
-    20: ['7 of Hearts', 7],
-    21: ['8 of Hearts', 8],
-    22: ['9 of Hearts', 9],
-    23: ['10 of Hearts', 10],
-    24: ['Jack of Hearts', 10],
-    25: ['Queen of Hearts', 10],
-    26: ['King of Hearts', 10],
-    27: ['Ace of Clubs',13],
-    28: ['2 of Clubs', 2],
-    29: ['3 of Clubs', 3],
-    30: ['4 of Clubs', 4],
-    31: ['5 of Clubs', 5],
-    32: ['6 of Clubs', 6],
-    33: ['7 of Clubs', 7],
-    34: ['8 of Clubs', 8],
-    35: ['9 of Clubs', 9],
-    36: ['10 of Clubs', 10],
-    37: ['Jack of Clubs', 10],
-    38: ['Queen of Clubs', 10],
-    39: ['King of Clubs', 10],
-    40: ['Ace of Diamonds',13],
-    41: ['2 of Diamonds', 2],
-    42: ['3 of Diamonds', 3],
-    43: ['4 of Diamonds', 4],
-    44: ['5 of Diamonds', 5],
-    45: ['6 of Diamonds', 6],
-    46: ['7 of Diamonds', 7],
-    47: ['8 of Diamonds', 8],
-    48: ['9 of Diamonds', 9],
-    49: ['10 of Diamonds', 10],
-    50: ['Jack of Diamonds', 10],
-    51: ['Queen of Diamonds', 10],
-    52: ['King of Diamonds', 10]
+#funuction for generating deck
+def generate_deck():
+    ranks = ['Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King']
+    suits = ['Spades', 'Hearts', 'Clubs', 'Diamonds']
+    
+    deck = {}
+    card_id = 1
 
-   
-}
+    for rank, suit in product(ranks, suits):
+        card_name = f'{rank} of {suit}'
+        value = get_card_value(rank)
+        deck[card_id] = [card_name] + value
+        card_id += 1
+
+    return deck
+
+#function for getting card values
+def get_card_value(rank):
+    if rank in ['2', '3', '4', '5', '6', '7', '8', '9', '10']:
+        return [int(rank)]
+    elif rank in ['Jack', 'Queen', 'King']:
+        return [10]
+    elif rank == 'Ace':
+        return [1, 11]
+
+CARDS = generate_deck()
 
 p1CARD = []
 dCARD = []
 hitCARD = []
+
 
 #helper function to build containers
 def build_container(name, color):
@@ -86,27 +58,40 @@ def build_button(name, color, callbac=None):
         )    
     return button
 
+#function to "deal cards" to the players
 def deal_cards(cards, num_players, cards_per_player):
     return [[cards.pop(card) for card in random.sample(range(1, 53), cards_per_player)] for _ in range(num_players)]
 
 p1CARD, dCARD = deal_cards(CARDS, 2, 2)
 
+p1TOTAL = float(p1CARD[0][1]) + float(p1CARD[1][1])
+dTOTAL = float(dCARD[0][1]) + float(dCARD[1][1])
+
 #main function
 def app(page: ft.Page):
 
-    p1TOTAL = float(p1CARD[0][1]) + float(p1CARD[1][1])
-    print(p1TOTAL)
-    print(p1CARD)
 
     #player cards
     p1c1 = build_container(p1CARD[0][0], ft.colors.BLUE)
     p1c2 = build_container(p1CARD[1][0], ft.colors.BLUE)
 
     dc1 = build_container(dCARD[0][0], ft.colors.BLUE)
-    dc2 = build_container(dCARD[1][0], ft.colors.BLUE)
+    dc2 = build_container("", ft.colors.BLUE)
 
     winner = build_container("", ft.colors.BLACK)
-     
+
+    #function to decide who wins
+    def checkcards():
+
+        if p1TOTAL == dTOTAL:
+            winner.content.value = "Tie"
+        elif p1TOTAL > dTOTAL:
+            winner.content.value = "Player One Wins"
+        elif dTOTAL > p1TOTAL:
+            winner.content.value = "Dealer Wins"
+
+        dc2.content.value = dCARD[1][0]
+        page.update() 
     
     #function for when p1 hits 
     def p1HIT_BUTTON(e):
@@ -114,11 +99,21 @@ def app(page: ft.Page):
         new_card_info = CARDS.pop(random.choice(list(CARDS.keys())))
         hitCARD.insert(0, new_card_info)
         new_card = build_container(hitCARD[0][0], ft.colors.BLUE)
-        pColumn1.content.controls.insert(-1, new_card)
+        pColumn1.content.controls.insert(-2, new_card)
+        page.update()
+        checkcards()
+
+    #fucntion for when p1 stands
+    def p1STAND_BUTTON(e):
+
+        dc2.content.value = dCARD[1][0]
+        checkcards()
+
         page.update()
         
-        
+
     p1HIT_BUTTON = build_button("HIT", ft.colors.GREEN, callbac=p1HIT_BUTTON)
+    p1STAND_BUTTON = build_button("STAND", ft.colors.GREEN, callbac=p1STAND_BUTTON)
     
     #layout
     pColumn1 = ft.Container(
@@ -128,6 +123,7 @@ def app(page: ft.Page):
                         p1c1,
                         p1c2,
                         p1HIT_BUTTON,
+                        p1STAND_BUTTON,
                     ],
                 ),
             )
@@ -167,12 +163,50 @@ def app(page: ft.Page):
 
     #function to start game
     def start_button(e):
-        #page.controls.pop()
         page.update()
         page.add(
             pColumns,
             winnerROW,
         )
+
+    #function to restart the game
+    def again(e):
+        global CARDS, p1CARD, dCARD, hitCARD, p1TOTAL, dTOTAL
+
+        # Generate a new deck
+        CARDS = generate_deck()
+
+        # Deal new cards to the player and dealer
+        p1CARD, dCARD = deal_cards(CARDS, 2, 2)
+
+        # Clear hit cards
+        hitCARD = []
+
+        #  Reset the player and dealer total values
+        p1TOTAL = float(p1CARD[0][1]) + float(p1CARD[1][1])
+        dTOTAL = float(dCARD[0][1]) + float(dCARD[1][1])
+
+        # Update UI elements to reflect the new game state
+        p1c1.content.value = p1CARD[0][0]
+        p1c2.content.value = p1CARD[1][0]
+        dc1.content.value = dCARD[0][0]
+        dc2.content.value = ""
+        #remoce cards added last game
+        for control in pColumn1.content.controls[:]:
+            if isinstance(control, ft.Container) and control.content.value in [hit_card[0] for hit_card in hitCARD]:
+                pColumn1.content.controls.remove(control)      
+
+        # Clear winner message
+        winner.content.value = ""
+
+        # Update the page
+        page.update()
+
+
+
+
+
+        page.update()
     
     page.add(
         ft.FilledButton(
@@ -180,12 +214,11 @@ def app(page: ft.Page):
             on_click=start_button,
             style=ft.ButtonStyle(shape=ft.CircleBorder(), padding=30),
             ), 
+        ft.FilledButton(
+            "again",
+            on_click=again,
+            style=ft.ButtonStyle(shape=ft.CircleBorder(), padding=30),
+            ),
     )
 
 ft.app(target=app, view=ft.AppView.WEB_BROWSER)
-
-
-
-
-
-
