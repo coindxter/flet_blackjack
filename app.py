@@ -1,6 +1,7 @@
 from itertools import product
 import flet as ft
 import random
+import time
 
 
 #funuction for generating deck
@@ -70,6 +71,59 @@ dTOTAL = float(dCARD[0][1]) + float(dCARD[1][1])
 #main function
 def app(page: ft.Page):
 
+    def again_2():
+        global CARDS, p1CARD, dCARD, hitCARD, p1TOTAL, dTOTAL
+
+        # Generate a new deck
+        CARDS = generate_deck()
+
+        # Deal new cards to the player and dealer
+        p1CARD, dCARD = deal_cards(CARDS, 2, 2)
+
+        # Clear hit cards
+        hitCARD = []
+
+        #  Reset the player and dealer total values
+        p1TOTAL = float(p1CARD[0][1]) + float(p1CARD[1][1])
+        dTOTAL = float(dCARD[0][1]) + float(dCARD[1][1])
+
+        # Update UI elements to reflect the new game state
+        p1c1.content.value = p1CARD[0][0]
+        p1c2.content.value = p1CARD[1][0]
+        dc1.content.value = dCARD[0][0]
+        dc2.content.value = ""
+
+        # Reset pColumn1
+        pColumn1.content.controls.clear()
+        pColumn1.content.controls.append(ft.Text(("Player One"), size=16))
+        pColumn1.content.controls.append(p1c1)
+        pColumn1.content.controls.append(p1c2)
+        pColumn1.content.controls.append(p1HIT_BUTTON)
+        pColumn1.content.controls.append(p1STAND_BUTTON)
+        
+        # Clear winner message
+        winner.content.value = ""
+
+        # Update the page
+        page.update()
+
+    def countdown():
+        time.sleep(4)
+        winner.content.value = "5"
+        page.update()
+        time.sleep(1)
+        winner.content.value = "4"
+        page.update()
+        time.sleep(1)
+        winner.content.value = "3"
+        page.update()
+        time.sleep(1)
+        winner.content.value = "2"
+        page.update()
+        time.sleep(1)
+        winner.content.value = "1"
+        page.update()
+        time.sleep(1)
 
     #player cards
     p1c1 = build_container(p1CARD[0][0], ft.colors.BLUE)
@@ -85,28 +139,50 @@ def app(page: ft.Page):
 
         if p1TOTAL == dTOTAL:
             winner.content.value = "Tie"
+        elif p1TOTAL == 21:
+            winner.content.value = "Player One Wins (21)"
+        elif dTOTAL == 21:
+            winner.content.value = "Dealer Wins (21)"
         elif p1TOTAL > dTOTAL:
-            winner.content.value = "Player One Wins"
+            winner.content.value = "Player One Wins (> dealer)"
         elif dTOTAL > p1TOTAL:
-            winner.content.value = "Dealer Wins"
+            winner.content.value = "Dealer Wins (> player)"
 
         dc2.content.value = dCARD[1][0]
         page.update() 
+        countdown()
+        again_2()
     
     #function for when p1 hits 
     def p1HIT_BUTTON(e):
+
+        global p1TOTAL
 
         new_card_info = CARDS.pop(random.choice(list(CARDS.keys())))
         hitCARD.insert(0, new_card_info)
         new_card = build_container(hitCARD[0][0], ft.colors.BLUE)
         pColumn1.content.controls.insert(-2, new_card)
-        page.update()
-        checkcards()
+        p1TOTAL += int(hitCARD[0][1])
+        if p1TOTAL > 21:
+            winner.content.value = "Player One busts, Dealer Wins"
+            dc2.content.value = dCARD[1][0]
+            page.update()
+            countdown()
+            again_2()
+        elif p1TOTAL == 21:
+            winner.content.value = "Player One got blackjack"
+            dc2.content.value = dCARD[1][0]
+            page.update()
+            countdown()
+            again_2()
 
-    #fucntion for when p1 stands
+
+        page.update()
+
+
+    #function for when p1 stands
     def p1STAND_BUTTON(e):
 
-        dc2.content.value = dCARD[1][0]
         checkcards()
 
         page.update()
@@ -191,23 +267,21 @@ def app(page: ft.Page):
         p1c2.content.value = p1CARD[1][0]
         dc1.content.value = dCARD[0][0]
         dc2.content.value = ""
-        #remoce cards added last game
-        for control in pColumn1.content.controls[:]:
-            if isinstance(control, ft.Container) and control.content.value in [hit_card[0] for hit_card in hitCARD]:
-                pColumn1.content.controls.remove(control)      
 
+        # Reset pColumn1
+        pColumn1.content.controls.clear()
+        pColumn1.content.controls.append(ft.Text(("Player One"), size=16))
+        pColumn1.content.controls.append(p1c1)
+        pColumn1.content.controls.append(p1c2)
+        pColumn1.content.controls.append(p1HIT_BUTTON)
+        pColumn1.content.controls.append(p1STAND_BUTTON)
+        
         # Clear winner message
         winner.content.value = ""
 
         # Update the page
         page.update()
 
-
-
-
-
-        page.update()
-    
     page.add(
         ft.FilledButton(
             "play", 

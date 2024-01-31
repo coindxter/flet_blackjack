@@ -17,7 +17,7 @@ Game Logic:
 - [ ] Check for natural blackjack (an Ace and a 10-value card) for both the player and the dealer.
 
 Player's Decisions:
-- [ ] Allow the player to hit (take another card) until they choose to stand or they bust (exceed 21).
+- [x] Allow the player to hit (take another card) until they choose to stand or they bust (exceed 21).
 - [ ] Implement the option for the player to double down (double their original bet) on their first two cards, usually allowed when the initial two cards total 9, 10, or 11.
 - [ ] If applicable, allow the player to split identical cards into two separate hands.
 
