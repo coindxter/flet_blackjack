@@ -12,7 +12,7 @@ Card Values:
 - [x] Number cards are worth their face value.
 
 Game Logic:
-- [ ] Implement the basic actions: Hit, Stand, Double Down, and Split (if allowing splits).
+- [x] Implement the basic actions: Hit, Stand.
 - [x] Deal two initial cards to the player and the dealer, with one of the dealer's cards hidden.
 - [ ] Check for natural blackjack (an Ace and a 10-value card) for both the player and the dealer.
 
@@ -22,13 +22,13 @@ Player's Decisions:
 - [ ] If applicable, allow the player to split identical cards into two separate hands.
 
 Dealer's Actions:
-- [ ] The dealer typically hits until their hand totals 17 or higher.
+- [x] The dealer typically hits until their hand totals 17 or higher.
 - [ ] Implement rules for the dealer to stand on a "hard 17" and hit on a "soft 17."
 
 Winning Conditions:
-- [ ] Player wins if their hand is closer to 21 than the dealer's without busting.
-- [ ] Dealer wins if the player busts or if the dealer's hand is closer to 21.
-- [ ] A tie (push) occurs if both the player and dealer have the same total.
+- [x] Player wins if their hand is closer to 21 than the dealer's without busting.
+- [x] Dealer wins if the player busts or if the dealer's hand is closer to 21.
+- [x] A tie (push) occurs if both the player and dealer have the same total.
 
 Betting:
 - [ ] Allow the player to place bets before each round.

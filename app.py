@@ -61,7 +61,11 @@ def build_button(name, color, callbac=None):
 
 #function to "deal cards" to the players
 def deal_cards(cards, num_players, cards_per_player):
-    return [[cards.pop(card) for card in random.sample(range(1, 53), cards_per_player)] for _ in range(num_players)]
+    try:
+        return [[cards.pop(card) for card in random.sample(range(1, 53), cards_per_player)] for _ in range(num_players)]
+    except KeyError:
+        print("key error trying again")
+        return deal_cards(CARDS, 2, 2) 
 
 p1CARD, dCARD = deal_cards(CARDS, 2, 2)
 
@@ -71,6 +75,7 @@ dTOTAL = float(dCARD[0][1]) + float(dCARD[1][1])
 #main function
 def app(page: ft.Page):
 
+    #2nd function to restart the game
     def again_2():
         global CARDS, p1CARD, dCARD, hitCARD, p1TOTAL, dTOTAL
 
@@ -95,11 +100,18 @@ def app(page: ft.Page):
 
         # Reset pColumn1
         pColumn1.content.controls.clear()
+        pColumn1.content.controls.append(ft.Text((f"Total: {p1TOTAL}"), size=16)),
         pColumn1.content.controls.append(ft.Text(("Player One"), size=16))
         pColumn1.content.controls.append(p1c1)
         pColumn1.content.controls.append(p1c2)
         pColumn1.content.controls.append(p1HIT_BUTTON)
         pColumn1.content.controls.append(p1STAND_BUTTON)
+        
+        # Reset pColumn2
+        pColumn2.content.controls.clear()
+        pColumn2.content.controls.append(ft.Text(("Dealer"), size=16))
+        pColumn2.content.controls.append(dc1)
+        pColumn2.content.controls.append(dc2)
         
         # Clear winner message
         winner.content.value = ""
@@ -107,8 +119,9 @@ def app(page: ft.Page):
         # Update the page
         page.update()
 
+    #countdown till next game
     def countdown():
-        time.sleep(4)
+        time.sleep(2)
         winner.content.value = "5"
         page.update()
         time.sleep(1)
@@ -124,6 +137,7 @@ def app(page: ft.Page):
         winner.content.value = "1"
         page.update()
         time.sleep(1)
+        again_2()
 
     #player cards
     p1c1 = build_container(p1CARD[0][0], ft.colors.BLUE)
@@ -134,24 +148,40 @@ def app(page: ft.Page):
 
     winner = build_container("", ft.colors.BLACK)
 
+    #function for deal hit/stand (automated)
+    def dealer():
+        
+        global dTOTAL
+
+        while dTOTAL < 16:
+            new_card_info = CARDS.pop(random.choice(list(CARDS.keys())))
+            hitCARD.insert(0, new_card_info)
+            new_card = build_container(hitCARD[0][0], ft.colors.BLUE)
+            pColumn2.content.controls.append(new_card)
+            dTOTAL += int(hitCARD[0][1])
+            page.update()
+            time.sleep(1)
+
+        dc2.content.value = dCARD[1][0]
+        page.update()
+        checkcards()
+        
     #function to decide who wins
     def checkcards():
+        global p1TOTAL, dTOTAL
 
         if p1TOTAL == dTOTAL:
             winner.content.value = "Tie"
-        elif p1TOTAL == 21:
-            winner.content.value = "Player One Wins (21)"
         elif dTOTAL == 21:
-            winner.content.value = "Dealer Wins (21)"
-        elif p1TOTAL > dTOTAL:
-            winner.content.value = "Player One Wins (> dealer)"
+            winner.content.value = "Dealer got Blackjack"
+        elif dTOTAL > 21:
+            winner.content.value = "Dealer busts, Player One Wins"
         elif dTOTAL > p1TOTAL:
-            winner.content.value = "Dealer Wins (> player)"
+            winner.content.value = "Dealer Wins"
+        elif p1TOTAL > dTOTAL:
+            winner.content.value = "Player One Wins (> dealer)" 
 
-        dc2.content.value = dCARD[1][0]
-        page.update() 
-        countdown()
-        again_2()
+        page.update()
     
     #function for when p1 hits 
     def p1HIT_BUTTON(e):
@@ -163,6 +193,8 @@ def app(page: ft.Page):
         new_card = build_container(hitCARD[0][0], ft.colors.BLUE)
         pColumn1.content.controls.insert(-2, new_card)
         p1TOTAL += int(hitCARD[0][1])
+        page.update()
+        pColumn1.content.controls[0].value = f"Total: {p1TOTAL}"
         if p1TOTAL > 21:
             winner.content.value = "Player One busts, Dealer Wins"
             dc2.content.value = dCARD[1][0]
@@ -176,18 +208,13 @@ def app(page: ft.Page):
             countdown()
             again_2()
 
-
         page.update()
-
 
     #function for when p1 stands
     def p1STAND_BUTTON(e):
 
-        checkcards()
-
-        page.update()
+        dealer()
         
-
     p1HIT_BUTTON = build_button("HIT", ft.colors.GREEN, callbac=p1HIT_BUTTON)
     p1STAND_BUTTON = build_button("STAND", ft.colors.GREEN, callbac=p1STAND_BUTTON)
     
@@ -195,6 +222,7 @@ def app(page: ft.Page):
     pColumn1 = ft.Container(
                 content=ft.Column(
                     [
+                        ft.Text((f"Total: {p1TOTAL}"), size=16),
                         ft.Text(("Player One"), size=16),
                         p1c1,
                         p1c2,
@@ -270,12 +298,21 @@ def app(page: ft.Page):
 
         # Reset pColumn1
         pColumn1.content.controls.clear()
+        pColumn1.content.controls.append(ft.Text((f"Total: {p1TOTAL}"), size=16)),
         pColumn1.content.controls.append(ft.Text(("Player One"), size=16))
         pColumn1.content.controls.append(p1c1)
         pColumn1.content.controls.append(p1c2)
         pColumn1.content.controls.append(p1HIT_BUTTON)
         pColumn1.content.controls.append(p1STAND_BUTTON)
         
+        # Reset pColumn2
+        pColumn2.content.controls.clear()
+        pColumn2.content.controls.append(ft.Text(("Dealer"), size=16))
+        pColumn2.content.controls.append(dc1)
+        pColumn2.content.controls.append(dc2)
+
+
+
         # Clear winner message
         winner.content.value = ""
 
