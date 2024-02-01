@@ -3,7 +3,6 @@ import flet as ft
 import random
 import time
 
-
 #funuction for generating deck
 def generate_deck():
     ranks = ['Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King']
@@ -27,14 +26,13 @@ def get_card_value(rank):
     elif rank in ['Jack', 'Queen', 'King']:
         return [10]
     elif rank == 'Ace':
-        return [1, 11]
+        return [1]
 
 CARDS = generate_deck()
 
 p1CARD = []
 dCARD = []
 hitCARD = []
-
 
 #helper function to build containers
 def build_container(name, color):
@@ -67,6 +65,7 @@ def deal_cards(cards, num_players, cards_per_player):
         print("key error trying again")
         return deal_cards(CARDS, 2, 2) 
 
+#deals cards to players
 p1CARD, dCARD = deal_cards(CARDS, 2, 2)
 
 p1TOTAL = float(p1CARD[0][1]) + float(p1CARD[1][1])
@@ -139,6 +138,35 @@ def app(page: ft.Page):
         time.sleep(1)
         again_2()
 
+    #aces are 1 or 11
+    def aces_player1():
+        
+        global p1TOTAL
+
+        for i in p1CARD:
+            if i[1] == 1:
+                if p1TOTAL + 10 > 21:
+                    p1TOTAL += 0 
+                elif p1TOTAL + 10 < 21:
+                    p1TOTAL += 10
+                    pColumn1.content.controls[0].value = f"Total: {p1TOTAL}"
+                elif p1TOTAL + 10 == 21:
+                    p1TOTAL += 10
+                    pColumn1.content.controls[0].value = f"Total: {p1TOTAL}"
+        page.update()
+        
+    #aces are 1 or 11
+    def aces_dealer():
+        for i in p1CARD:
+            if i[0] == "Ace":
+                if p1TOTAL + 10 >= 21:
+                    return 
+                elif p1TOTAL + 10 < 21:
+                    p1TOTAL += 10
+                elif p1TOTAL + 10 == 21:
+                    p1TOTAL += 10
+
+
     #player cards
     p1c1 = build_container(p1CARD[0][0], ft.colors.BLUE)
     p1c2 = build_container(p1CARD[1][0], ft.colors.BLUE)
@@ -182,7 +210,8 @@ def app(page: ft.Page):
             winner.content.value = "Player One Wins (> dealer)" 
 
         page.update()
-    
+        countdown()
+
     #function for when p1 hits 
     def p1HIT_BUTTON(e):
 
@@ -213,6 +242,7 @@ def app(page: ft.Page):
     #function for when p1 stands
     def p1STAND_BUTTON(e):
 
+        aces_player1()
         dealer()
         
     p1HIT_BUTTON = build_button("HIT", ft.colors.GREEN, callbac=p1HIT_BUTTON)
