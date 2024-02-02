@@ -140,7 +140,7 @@ def app(page: ft.Page):
 
     #aces are 1 or 11
     def aces_player1():
-        
+
         global p1TOTAL
 
         for i in p1CARD:
@@ -157,14 +157,19 @@ def app(page: ft.Page):
         
     #aces are 1 or 11
     def aces_dealer():
-        for i in p1CARD:
-            if i[0] == "Ace":
-                if p1TOTAL + 10 >= 21:
+
+        global dTOTAL
+
+        for i in dCARD:
+            if i[1] == 1:
+                if dTOTAL + 10 > 21:
                     return 
-                elif p1TOTAL + 10 < 21:
-                    p1TOTAL += 10
-                elif p1TOTAL + 10 == 21:
-                    p1TOTAL += 10
+                elif dTOTAL + 10 < 21:
+                    dTOTAL += 10
+                    return True
+                elif dTOTAL + 10 == 21:
+                    dTOTAL += 10
+                    return True
 
 
     #player cards
@@ -181,7 +186,10 @@ def app(page: ft.Page):
         
         global dTOTAL
 
+
         while dTOTAL < 16:
+            if aces_dealer() == True:
+                break
             new_card_info = CARDS.pop(random.choice(list(CARDS.keys())))
             hitCARD.insert(0, new_card_info)
             new_card = build_container(hitCARD[0][0], ft.colors.BLUE)
